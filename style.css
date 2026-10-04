@@ -1,0 +1,385 @@
+/* Reset e configurações gerais */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+:root {
+  --bg-color: #0d0f12;
+  --card-bg: #161a1e;
+  --card-border: #232931;
+  --primary-pink: #ff2e93;
+  --primary-pink-hover: #e0247f;
+  --text-main: #f5f6f8;
+  --text-muted: #9ba1a6;
+  --slot-bg: #1f242c;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  min-height: 100vh;
+  padding: 24px 16px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Cabeçalho */
+.header {
+  text-align: center;
+  max-width: 480px;
+  margin-bottom: 28px;
+}
+
+.avatar-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.avatar-placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-pink), #8a185b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  border: 3px solid var(--primary-pink);
+  box-shadow: 0 0 16px rgba(255, 46, 147, 0.35);
+}
+
+.header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+
+.bio {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 12px;
+}
+
+.badge {
+  display: inline-block;
+  background-color: rgba(255, 46, 147, 0.12);
+  color: var(--primary-pink);
+  border: 1px solid rgba(255, 46, 147, 0.3);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* Estrutura principal */
+.container {
+  width: 100%;
+  max-width: 480px;
+}
+
+.card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.card h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Passo 1: Lista de Serviços */
+.grid-servicos {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.servico-item {
+  background-color: var(--slot-bg);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.servico-item:hover {
+  border-color: rgba(255, 46, 147, 0.4);
+}
+
+.servico-item.selected {
+  border-color: var(--primary-pink);
+  background-color: rgba(255, 46, 147, 0.08);
+}
+
+.servico-item strong {
+  width: 100%;
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.servico-item .duracao {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.servico-item .preco {
+  font-weight: 700;
+  color: var(--primary-pink);
+  font-size: 1.05rem;
+}
+
+/* Passo 2: Data e Horários */
+label {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+input[type="date"],
+input[type="text"],
+input[type="tel"] {
+  width: 100%;
+  background-color: var(--slot-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: var(--text-main);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+input[type="date"]:focus,
+input[type="text"]:focus,
+input[type="tel"]:focus {
+  border-color: var(--primary-pink);
+}
+
+/* Inverter ícone do calendário para tema escuro */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
+.horarios-wrapper {
+  margin-top: 18px;
+}
+
+.slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.slot-btn {
+  background-color: var(--slot-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-main);
+  padding: 10px 0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.slot-btn:hover:not(:disabled) {
+  border-color: var(--primary-pink);
+}
+
+.slot-btn.selected {
+  background-color: var(--primary-pink);
+  color: #fff;
+  border-color: var(--primary-pink);
+}
+
+.slot-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.hint {
+  grid-column: 1 / -1;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Passo 3: Dados Pessoais & Botão */
+.campo {
+  margin-bottom: 16px;
+}
+
+.btn-primary {
+  width: 100%;
+  background-color: var(--primary-pink);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(255, 46, 147, 0.4);
+  transition: all 0.2s ease;
+  margin-top: 8px;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--primary-pink-hover);
+  transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Legenda de Horários */
+.horarios-legendas {
+  display: flex;
+  gap: 16px;
+  margin: 12px 0 6px;
+  font-size: 0.85rem;
+}
+
+.legenda {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+}
+
+.cor-box {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+}
+
+.cor-box.verde { background-color: #10b981; }
+.cor-box.vermelho { background-color: #ef4444; }
+
+/* Slots Coloridos */
+.slot-btn.slot-verde {
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #10b981;
+}
+
+.slot-btn.slot-verde:hover {
+  background-color: rgba(16, 185, 129, 0.15);
+}
+
+.slot-btn.slot-verde.selected {
+  background-color: #10b981;
+  color: #fff;
+  border-color: #10b981;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+
+.slot-btn.slot-vermelho {
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.08);
+  opacity: 0.6;
+}
+
+/* Input File */
+input[type="file"] {
+  background: var(--slot-bg);
+  padding: 10px;
+  border-radius: 8px;
+  width: 100%;
+  color: var(--text-muted);
+  border: 1px dashed var(--card-border);
+}
+
+.footer-link {
+  margin-top: 32px;
+  text-align: center;
+}
+
+.footer-link a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.8rem;
+}
+
+.footer-link a:hover {
+  color: var(--primary-pink);
+}
+
+/* Estilos Específicos do Admin */
+.admin-card-pedido {
+  background: var(--slot-bg);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid var(--card-border);
+}
+
+.admin-card-pedido.status-confirmado { border-left: 4px solid #10b981; }
+.admin-card-pedido.status-pendente { border-left: 4px solid #f59e0b; }
+.admin-card-pedido.status-recusado { border-left: 4px solid #ef4444; }
+
+.thumb-preview {
+  width: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin: 10px 0;
+}
+
+.admin-acoes {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.btn-aceitar {
+  flex: 1;
+  background-color: #10b981;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-recusar {
+  flex: 1;
+  background-color: #ef4444;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}

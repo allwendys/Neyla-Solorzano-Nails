@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel Neyla Solorzano Nails</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <header class="header">
+    <h1>Painel de Controle</h1>
+    <p class="bio">Gerenciamento de Agendamentos e Serviços</p>
+    <a href="index.html" style="color: var(--primary-pink); text-decoration: none;">← Voltar ao Site</a>
+  </header>
+
+  <main class="container">
+    
+    <!-- Bloqueio Manual de Horário -->
+    <section class="card">
+      <h2>Bloquear Horário Manualmente</h2>
+      <form id="form-bloqueio">
+        <label>Data:</label>
+        <input type="date" id="bloqueio-data" required />
+        <label style="margin-top:8px;">Horário:</label>
+        <select id="bloqueio-hora" style="width:100%; padding:10px; background:var(--slot-bg); color:#fff; border:1px solid var(--card-border); border-radius:8px;">
+          <option value="09:30">09:30</option>
+          <option value="11:00">11:00</option>
+          <option value="13:00">13:00</option>
+          <option value="14:30">14:30</option>
+          <option value="16:00">16:00</option>
+          <option value="17:30">17:30</option>
+        </select>
+        <button type="submit" class="btn-primary" style="margin-top:12px;">Bloquear Horário</button>
+      </form>
+    </section>
+
+    <!-- Cadastro de Novos Serviços -->
+    <section class="card">
+      <h2>Adicionar Novo Procedimento</h2>
+      <form id="form-novo-servico">
+        <input type="text" id="novo-nome" placeholder="Nome do procedimento" required style="margin-bottom:8px;" />
+        <input type="number" id="novo-preco" placeholder="Preço (Ex: 85.00)" step="0.5" required style="margin-bottom:8px;" />
+        <input type="number" id="nova-duracao" placeholder="Duração em minutos (Ex: 60)" required style="margin-bottom:8px;" />
+        <button type="submit" class="btn-primary">Cadastrar Procedimento</button>
+      </form>
+    </section>
+
+    <!-- Lista de Solicitações -->
+    <section class="card">
+      <h2>Solicitações de Agendamento</h2>
+      <div id="lista-pedidos">Carregando pedidos...</div>
+    </section>
+
+  </main>
+
+  <script>
+    const SUPABASE_URL = 'SUA_SUPABASE_URL_AQUI';
+    const SUPABASE_ANON_KEY = 'SUA_CHAVE_ANON_AQUI';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Carregar Pedidos
+    async function carregarPedidos() {
+      const container = document.getElementById('lista-pedidos');
+      const { data: pedidos, error } = await _supabase
+        .from('agendamentos')
+        .select('*, servicos(nome, preco)')
+        .order('id', { ascending: false });
+
+      if (error || !pedidos.length) {
+        container.innerHTML = '<p class="hint">Nenhum pedido encontrado.</p>';
+        return;
+      }
+
+      container.innerHTML = '';
+      pedidos.forEach(p => {
+        const card = document.createElement('div');
+        card.className = `admin-card-pedido status-${p.status}`;
+        
+        const fotoHtml = p.foto_referencia_url 
+          ? `<a href="${p.foto_referencia_url}" target="_blank"><img src="${p.foto_referencia_url}" class="thumb-preview" alt="Referência" /></a>` 
+          : '<p class="hint" style="margin: 6px 0;">Sem foto de referência anexada</p>';
+
+        card.innerHTML = `
+          <strong>${p.cliente_nome}</strong> (${p.status.toUpperCase()})<br/>
+          <small>📱 ${p.cliente_telefone}</small><br/>
+          <p style="margin: 6px 0;">💅 <b>${p.servicos ? p.servicos.nome : 'Serviço'}</b> - R$ ${p.servicos ? Number(p.servicos.preco).toFixed(2) : ''}</p>
+          <p>📅 Dia: <b>${p.data.split('-').reverse().join('/')}</b> às <b>${p.horario.slice(0,5)}</b></p>
+          ${fotoHtml}
+          ${p.motivo_recusa ? `<p style="color:#ef4444; font-size:0.85rem;"><b>Motivo Recusa:</b> ${p.motivo_recusa}</p>` : ''}
+          
+          ${p.status === 'pendente' ? `
+            <div class="admin-acoes">
+              <button class="btn-aceitar" onclick="decidirPedido(${p.id}, 'confirmado', '${p.cliente_telefone}', '${p.cliente_nome}', '${p.data}', '${p.horario.slice(0,5)}', '${p.servicos?.nome}')">Aceitar</button>
+              <button class="btn-recusar" onclick="decidirPedido(${p.id}, 'recusado', '${p.cliente_telefone}', '${p.cliente_nome}', '${p.data}', '${p.horario.slice(0,5)}', '${p.servicos?.nome}')">Recusar</button>
+            </div>
+          ` : ''}
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Aceitar ou Recusar com integração direta no WhatsApp
+    async function decidirPedido(id, novoStatus, telefone, nome, data, hora, servico) {
+      let motivo = null;
+      let mensagemWpp = '';
+      const dataFormatada = data.split('-').reverse().join('/');
+
+      if (novoStatus === 'confirmado') {
+        const ok = confirm(`Confirmar agendamento de ${nome}?`);
+        if (!ok) return;
+        mensagemWpp = `Olá ${nome}! Aqui é do Neyla Solorzano Nails ✨ Seu agendamento para *${servico}* no dia *${dataFormatada}* às *${hora}* foi CONFIRMADO com sucesso! Te aguardo.`;
+      } else {
+        motivo = prompt('Informe o motivo da recusa (será enviado para o cliente):');
+        if (!motivo) return alert('É necessário informar um motivo para recusar.');
+        mensagemWpp = `Olá ${nome}, aqui é do Neyla Solorzano Nails. Infelizmente não poderei confirmar seu horário para *${servico}* no dia *${dataFormatada}* às *${hora}*.\n\n*Motivo:* ${motivo}\n\nPor favor, acesse o site e escolha outro horário disponível!`;
+      }
+
+      const { error } = await _supabase
+        .from('agendamentos')
+        .update({ status: novoStatus, motivo_recusa: motivo })
+        .eq('id', id);
+
+      if (error) {
+        alert('Erro ao atualizar: ' + error.message);
+        return;
+      }
+
+      // Redireciona direto para o WhatsApp da cliente com a resposta
+      const urlWpp = `https://wa.me/55${telefone}?text=${encodeURIComponent(mensagemWpp)}`;
+      window.open(urlWpp, '_blank');
+      carregarPedidos();
+    }
+
+    // Criar Bloqueio Manual
+    document.getElementById('form-bloqueio').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = document.getElementById('bloqueio-data').value;
+      const horario = document.getElementById('bloqueio-hora').value;
+
+      const { error } = await _supabase.from('bloqueios_manuais').insert([{ data, horario }]);
+      if (error) alert('Erro ao bloquear: ' + error.message);
+      else {
+        alert('Horário bloqueado com sucesso!');
+        e.target.reset();
+      }
+    });
+
+    // Criar Novo Serviço
+    document.getElementById('form-novo-servico').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const nome = document.getElementById('novo-nome').value;
+      const preco = parseFloat(document.getElementById('novo-preco').value);
+      const duracao = parseInt(document.getElementById('nova-duracao').value);
+
+      const { error } = await _supabase.from('servicos').insert([{ nome, preco, duracao_minutos: duracao }]);
+      if (error) alert('Erro ao cadastrar: ' + error.message);
+      else {
+        alert('Procedimento cadastrado com sucesso!');
+        e.target.reset();
+      }
+    });
+
+    carregarPedidos();
+  </script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neyla Solorzano Nails • Agendamento Online</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <header class="header">
+    <div class="avatar-container">
+      <div class="avatar-placeholder">NS</div>
+    </div>
+    <h1>Neyla Solorzano Nails</h1>
+    <p class="bio">Transformando a sua autoestima com qualidade ✨</p>
+    <span class="badge">Atendimento com hora marcada (9h30 às 19h)</span>
+  </header>
+
+  <main class="container">
+    <form id="form-agendamento">
+      
+      <!-- Passo 1: Serviços -->
+      <section class="card">
+        <h2>1. Procedimento</h2>
+        <div id="lista-servicos" class="grid-servicos">
+          <p>Carregando serviços...</p>
+        </div>
+      </section>
+
+      <!-- Passo 2: Data e Horário com Cores -->
+      <section class="card">
+        <h2>2. Data e Horário</h2>
+        <label for="data-agenda">Escolha o dia:</label>
+        <input type="date" id="data-agenda" required />
+
+        <div class="horarios-legendas">
+          <span class="legenda"><span class="cor-box verde"></span> Disponível</span>
+          <span class="legenda"><span class="cor-box vermelho"></span> Ocupado</span>
+        </div>
+
+        <div class="horarios-wrapper">
+          <div id="slots-horario" class="slots-grid">
+            <span class="hint">Escolha uma data para exibir a disponibilidade</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Passo 3: Dados Pessoais e Foto -->
+      <section class="card">
+        <h2>3. Seus Dados & Referência</h2>
+        <div class="campo">
+          <label for="nome">Nome Completo:</label>
+          <input type="text" id="nome" placeholder="Seu nome" required />
+        </div>
+        
+        <div class="campo">
+          <label for="whatsapp">WhatsApp (com DDD, apenas dígitos):</label>
+          <input type="tel" id="whatsapp" placeholder="Ex: 92999998888" required />
+        </div>
+
+        <div class="campo">
+          <label for="foto-unha">Foto de inspiração/referência (Opcional):</label>
+          <input type="file" id="foto-unha" accept="image/*" />
+        </div>
+
+        <button type="submit" id="btn-confirmar" class="btn-primary" disabled>
+          Enviar Pedido de Agendamento
+        </button>
+      </section>
+
+    </form>
+  </main>
+
+  <footer class="footer-link">
+    <a href="admin.html">Área Administrativa</a>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
